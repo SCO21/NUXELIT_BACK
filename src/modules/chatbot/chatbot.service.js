@@ -55,7 +55,6 @@ const processMessage = async (sessionId, incomingMessage) => {
       const model = new ChatGoogleGenerativeAI({
         model: activeModel,
         temperature: parseFloat(process.env.LLM_TEMPERATURE) || 0.7,
-        maxOutputTokens: parseInt(process.env.LLM_MAX_TOKENS) || 2048,
         apiKey: process.env.GOOGLE_API_KEY.trim()
       });
 
