@@ -1,13 +1,13 @@
 const ChatbotConversation = require('./chatbot.model');
 const { getPaginationData } = require('../../utils/pagination');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 const siteConfigService = require('../siteConfig/siteConfig.service');
 const { getSystemPrompt } = require('./chatbot.prompts');
 const { ChatGoogleGenerativeAI } = require('@langchain/google-genai');
 const { HumanMessage, SystemMessage, AIMessage } = require('@langchain/core/messages');
 
 const createSession = async (language = 'es') => {
-  const sessionId = uuidv4();
+  const sessionId = crypto.randomUUID();
   
   await ChatbotConversation.create({
     sessionId,
@@ -47,8 +47,13 @@ const processMessage = async (sessionId, incomingMessage) => {
   // Call Gemini if API Key exists, else fallback
   if (process.env.GOOGLE_API_KEY) {
     try {
+      let activeModel = (process.env.GEMINI_MODEL || 'gemini-flash-latest').trim();
+      if (activeModel.includes('1.5-flash')) {
+        activeModel = 'gemini-flash-latest'; // Overwrite deprecated variable if present
+      }
+      
       const model = new ChatGoogleGenerativeAI({
-        model: (process.env.GEMINI_MODEL || 'gemini-flash-latest').trim(),
+        model: activeModel,
         temperature: parseFloat(process.env.LLM_TEMPERATURE) || 0.7,
         maxOutputTokens: parseInt(process.env.LLM_MAX_TOKENS) || 500,
         apiKey: process.env.GOOGLE_API_KEY.trim()
