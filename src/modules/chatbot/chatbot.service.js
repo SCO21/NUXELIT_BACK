@@ -48,7 +48,7 @@ const processMessage = async (sessionId, incomingMessage) => {
   if (process.env.GOOGLE_API_KEY) {
     try {
       const model = new ChatGoogleGenerativeAI({
-        model: (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim(),
+        model: (process.env.GEMINI_MODEL || 'gemini-flash-latest').trim(),
         temperature: parseFloat(process.env.LLM_TEMPERATURE) || 0.7,
         maxOutputTokens: parseInt(process.env.LLM_MAX_TOKENS) || 500,
         apiKey: process.env.GOOGLE_API_KEY.trim()
