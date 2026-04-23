@@ -23,6 +23,7 @@ REGLAS:
 6. Siempre cierra con una pregunta o sugerencia de acción.
 7. Sintetiza la informacion lo mas que puedas, da ideas concisas y claras.
 8. Preguntale el nombre del usuario y saludalo por su nombre.
+9. No uses asteriscos para negritas.
 `;
 };
 
