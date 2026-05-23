@@ -26,5 +26,12 @@ module.exports = {
     ACTIVE: 'active',
     ESCALATED: 'escalated',
     CLOSED: 'closed'
+  },
+  ESTIMATION_STATUS: {
+    PENDING: 'Pendiente',
+    APPROVED: 'Aprobado',
+    REJECTED: 'Rechazado',
+    MODIFIED: 'Modificado'
   }
 };
+

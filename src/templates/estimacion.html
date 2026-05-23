@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estimación de tiempos - {{estimation.title}}</title>
+  <style>
+    :root {
+      --nux-black: #0b0d11;
+      --nux-dark: #131519;
+      --nux-gray: #2a2d32;
+      --nux-light: #e0e1e7;
+      --nux-blue: #3a36e4;
+      --nux-violet: #632de1;
+      --ink: #1f2430;
+      --muted: #6b7280;
+      --paper: #ffffff;
+      --soft: #f6f8fc;
+      --soft-blue: #eef0ff;
+      --line: #d9dce5;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    @page { size: A4; margin: 14mm 13mm 15mm 13mm; }
+    .page, .page * { box-sizing: border-box !important; }
+    .page { width: 100% !important; color: #1f2430 !important; background: #ffffff !important; font-family: "Satoshi", "Inter", "Segoe UI", Arial, sans-serif !important; font-size: 12px !important; line-height: 1.42 !important; margin: 0 !important; padding: 0 !important; }
+    .page-break { page-break-before: always !important; break-before: page !important; }
+    .avoid-break { page-break-inside: avoid !important; break-inside: avoid !important; }
+    .topbar { display: grid !important; grid-template-columns: 34% 1fr 22% !important; gap: 14px !important; align-items: stretch !important; margin-bottom: 16px !important; border-bottom: 4px solid #3a36e4 !important; padding-bottom: 12px !important; }
+    .brand-card { background: linear-gradient(135deg, #131519, #202435) !important; color: #ffffff !important; border-radius: 14px !important; padding: 16px 18px !important; min-height: 98px !important; position: relative !important; overflow: hidden !important; }
+    .brand-card:after { content: "" !important; position: absolute !important; right: -44px !important; bottom: -52px !important; width: 145px !important; height: 145px !important; border-radius: 50% !important; background: radial-gradient(circle, rgba(58,54,228,0.35), rgba(99,45,225,0.08), transparent 68%) !important; }
+    .brand-logo { display: flex !important; align-items: center !important; gap: 12px !important; position: relative !important; z-index: 2 !important; }
+    .brand-mark { width: 42px !important; height: 42px !important; border-radius: 10px !important; background: #ffffff !important; color: #131519 !important; display: grid !important; place-items: center !important; font-size: 30px !important; font-weight: 900 !important; letter-spacing: -4px !important; }
+    .brand-name { font-size: 19px !important; font-weight: 800 !important; letter-spacing: 2px !important; text-transform: uppercase !important; }
+    .brand-tagline { margin-top: 4px !important; color: #e0e1e7 !important; font-size: 10px !important; }
+    .title-card { background: #eef0ff !important; border: 1px solid #d9dce5 !important; border-radius: 14px !important; padding: 18px 22px !important; }
+    .eyebrow { color: #3a36e4 !important; font-size: 10px !important; font-weight: 800 !important; letter-spacing: .9px !important; text-transform: uppercase !important; margin-bottom: 6px !important; }
+    .page h1 { margin: 0 !important; font-size: 24px !important; line-height: 1.1 !important; color: #131519 !important; }
+    .subtitle { margin-top: 8px !important; color: #6b7280 !important; font-size: 11px !important; }
+    .meta-card { border: 1px solid #d9dce5 !important; border-radius: 14px !important; padding: 14px !important; background: #ffffff !important; }
+    .meta-line { display: flex !important; justify-content: space-between !important; gap: 8px !important; border-bottom: 1px solid #d9dce5 !important; padding: 6px 0 !important; }
+    .meta-line:last-child { border-bottom: 0 !important; }
+    .label { color: #6b7280 !important; font-size: 10px !important; font-weight: 700 !important; text-transform: uppercase !important; }
+    .value { font-weight: 700 !important; text-align: right !important; color: #1f2430 !important; }
+    .status { display: inline-block !important; padding: 5px 10px !important; border-radius: 999px !important; font-size: 10px !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: .5px !important; }
+    .status-pendiente { background: #fff7ed !important; color: #9a3412 !important; }
+    .status-aprobado { background: #ecfdf5 !important; color: #047857 !important; }
+    .status-rechazado { background: #fef2f2 !important; color: #b91c1c !important; }
+    .status-modificado { background: #eef0ff !important; color: #3a36e4 !important; }
+    .section { margin: 16px 0 0 !important; page-break-inside: avoid !important; }
+    .section-header { display: flex !important; align-items: center !important; justify-content: space-between !important; background: linear-gradient(90deg, #3a36e4, #632de1) !important; color: #ffffff !important; padding: 9px 12px !important; border-radius: 10px 10px 0 0 !important; font-weight: 800 !important; letter-spacing: .2px !important; }
+    .section-body { border: 1px solid #d9dce5 !important; border-top: 0 !important; border-radius: 0 0 10px 10px !important; padding: 12px !important; background: #ffffff !important; }
+    .grid-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+    .grid-3 { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; }
+    .grid-5 { display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 8px !important; }
+    .field-box { border: 1px solid #d9dce5 !important; background: #f6f8fc !important; border-radius: 10px !important; padding: 10px !important; min-height: 58px !important; }
+    .field-box .label { margin-bottom: 4px !important; }
+    .field-box .value { text-align: left !important; font-size: 12px !important; color: #1f2430 !important; }
+    .kpi { border: 1px solid #d9dce5 !important; background: #ffffff !important; border-radius: 12px !important; padding: 10px !important; min-height: 74px !important; position: relative !important; overflow: hidden !important; }
+    .kpi:before { content: "" !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; height: 4px !important; background: linear-gradient(90deg, #3a36e4, #632de1) !important; }
+    .kpi .label { margin-top: 2px !important; }
+    .kpi .number { margin-top: 8px !important; font-size: 18px !important; font-weight: 900 !important; color: #131519 !important; }
+    .page table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; }
+    .page th { background: #3a36e4 !important; color: #ffffff !important; font-size: 10px !important; padding: 8px 7px !important; border: 1px solid #3a36e4 !important; text-align: left !important; vertical-align: top !important; }
+    .page td { border: 1px solid #d9dce5 !important; padding: 7px !important; vertical-align: top !important; font-size: 10.5px !important; color: #1f2430 !important; }
+    .page tbody tr:nth-child(even) td { background: #f6f8fc !important; }
+    .text-right { text-align: right !important; }
+    .text-center { text-align: center; }
+    .badge { display: inline-block !important; padding: 3px 7px !important; border-radius: 999px !important; background: #eef0ff !important; color: #3a36e4 !important; font-weight: 800 !important; font-size: 9px !important; text-transform: uppercase !important; }
+    .note { background: #eef0ff !important; border: 1px solid #cfd3ff !important; border-left: 5px solid #3a36e4 !important; border-radius: 10px !important; padding: 10px 12px !important; color: #1f2430 !important; }
+    .image-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+    .image-card { border: 1px solid #d9dce5 !important; border-radius: 12px !important; padding: 8px !important; background: #f6f8fc !important; page-break-inside: avoid !important; }
+    .image-card img { width: 100% !important; max-height: 230px !important; object-fit: contain !important; display: block !important; background: #ffffff !important; border: 1px solid #d9dce5 !important; border-radius: 8px !important; }
+    .image-caption { margin-top: 7px !important; color: #6b7280 !important; font-size: 10px !important; }
+    .footer { margin-top: 18px !important; padding-top: 10px !important; border-top: 1px solid #d9dce5 !important; color: #6b7280 !important; font-size: 9.5px !important; display: flex !important; justify-content: space-between !important; gap: 12px !important; }
+    .signature-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 16px !important; margin-top: 18px !important; }
+    .signature-box { border: 1px solid #d9dce5 !important; border-radius: 10px !important; padding: 12px !important; min-height: 88px !important; }
+    .signature-line { margin-top: 32px !important; border-top: 1px solid #2a2d32 !important; padding-top: 6px !important; color: #6b7280 !important; font-size: 10px !important; }
+    @media print { .page { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="topbar avoid-break">
+      <div class="brand-card">
+        <div class="brand-logo">
+          <div class="brand-mark">N</div>
+          <div>
+            <div class="brand-name">NUXELIT</div>
+            <div class="brand-tagline">Diseño, Tecnología y Estrategia en Interacción.</div>
+          </div>
+        </div>
+      </div>
+      <div class="title-card">
+        <div class="eyebrow">Estimación de tiempos</div>
+        <h1>{{estimation.title}}</h1>
+        <div class="subtitle">{{project.name}} · {{project.type}} · {{project.environment}}</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-line"><span class="label">Código</span><span class="value">{{estimation.code}}</span></div>
+        <div class="meta-line"><span class="label">Fecha</span><span class="value">{{estimation.date}}</span></div>
+        <div class="meta-line"><span class="label">Versión</span><span class="value">{{estimation.version}}</span></div>
+        <div class="meta-line"><span class="label">Estado</span><span class="status status-{{estimation.statusKey}}">{{estimation.status}}</span></div>
+      </div>
+    </section>
+    <section class="section avoid-break">
+      <div class="section-header">Información general</div>
+      <div class="section-body">
+        <div class="grid-3">
+          <div class="field-box"><div class="label">Cliente</div><div class="value">{{client.name}}</div></div>
+          <div class="field-box"><div class="label">Proyecto</div><div class="value">{{project.name}}</div></div>
+          <div class="field-box"><div class="label">Responsable</div><div class="value">{{estimation.responsible}}</div></div>
+          <div class="field-box"><div class="label">Plan base</div><div class="value">{{project.plan}}</div></div>
+          <div class="field-box"><div class="label">Tipo de desarrollo</div><div class="value">{{project.type}}</div></div>
+          <div class="field-box"><div class="label">Prioridad</div><div class="value">{{project.priority}}</div></div>
+        </div>
+      </div>
+    </section>
+    <section class="section avoid-break">
+      <div class="section-header">Resumen ejecutivo</div>
+      <div class="section-body">
+        <div class="grid-5">
+          <div class="kpi"><div class="label">Subtotal horas</div><div class="number">{{summary.subtotalHours}}</div></div>
+          <div class="kpi"><div class="label">Colchón riesgo</div><div class="number">{{summary.riskHours}}</div></div>
+          <div class="kpi"><div class="label">Total horas</div><div class="number">{{summary.totalHours}}</div></div>
+          <div class="kpi"><div class="label">Total días</div><div class="number">{{summary.totalDays}}</div></div>
+          <div class="kpi"><div class="label">Semanas</div><div class="number">{{summary.weeks}}</div></div>
+        </div>
+        {{#if summary.executiveNote}}
+        <div style="height:12px"></div>
+        <div class="note">{{summary.executiveNote}}</div>
+        {{/if}}
+      </div>
+    </section>
+    <section class="section avoid-break">
+      <div class="section-header">Alcance y supuestos</div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="field-box"><div class="label">Alcance</div><div>{{project.scope}}</div></div>
+          <div class="field-box"><div class="label">Supuestos clave</div><div>{{project.assumptions}}</div></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-header">Detalle de actividades</div>
+      <div class="section-body">
+        <table>
+          <thead><tr>
+            <th style="width:8%">Origen</th><th style="width:10%">Fase</th><th style="width:17%">Actividad</th><th style="width:28%">Descripción</th><th style="width:9%">Tipo</th><th style="width:10%">Rol</th><th style="width:8%">Complejidad</th><th style="width:6%" class="text-right">Horas</th><th style="width:6%" class="text-right">Días</th>
+          </tr></thead>
+          <tbody>
+            {{#each activities}}
+            <tr>
+              <td><span class="badge">{{origin}}</span></td><td>{{phase}}</td><td>{{name}}</td><td>{{description}}</td><td>{{type}}</td><td>{{role}}</td><td>{{complexity}}</td><td class="text-right">{{estimatedHours}}</td><td class="text-right">{{days}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section avoid-break">
+      <div class="section-header">Resumen por fase</div>
+      <div class="section-body">
+        <table>
+          <thead><tr><th>Fase</th><th class="text-right">Horas</th><th class="text-right">Participación</th><th>Responsables principales</th></tr></thead>
+          <tbody>
+            {{#each totalsByPhase}}
+            <tr><td>{{phase}}</td><td class="text-right">{{hours}}</td><td class="text-right">{{percentage}}</td><td>{{roles}}</td></tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {{#if cost.enabled}}
+    <section class="section avoid-break">
+      <div class="section-header">Estimación de costos</div>
+      <div class="section-body">
+        <div class="grid-3">
+          <div class="field-box"><div class="label">Tarifa hora</div><div class="value">{{cost.hourlyRate}}</div></div>
+          <div class="field-box"><div class="label">Subtotal</div><div class="value">{{cost.subtotal}}</div></div>
+          <div class="field-box"><div class="label">Total</div><div class="value">{{cost.total}}</div></div>
+        </div>
+        {{#if cost.notes}}
+        <div style="height:12px"></div>
+        <div class="note">{{cost.notes}}</div>
+        {{/if}}
+      </div>
+    </section>
+    {{/if}}
+    {{#if architectureImages.length}}
+    <section class="section page-break">
+      <div class="section-header">Arquitectura propuesta</div>
+      <div class="section-body">
+        <div class="image-grid">
+          {{#each architectureImages}}
+          <div class="image-card">
+            <img src="{{url}}" alt="{{title}}" />
+            <div class="image-caption"><strong>{{title}}</strong><br />{{description}}</div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </section>
+    {{/if}}
+    {{#if notes.length}}
+    <section class="section avoid-break">
+      <div class="section-header">Observaciones, exclusiones y condiciones</div>
+      <div class="section-body">
+        <table><tbody>
+          {{#each notes}}
+          <tr><td style="width:24%"><strong>{{title}}</strong></td><td>{{description}}</td></tr>
+          {{/each}}
+        </tbody></table>
+      </div>
+    </section>
+    {{/if}}
+    <section class="section avoid-break">
+      <div class="section-header">Aprobación</div>
+      <div class="section-body">
+        <div class="signature-grid">
+          <div class="signature-box">
+            <div class="label">Elaborado por</div>
+            <div class="value" style="text-align:left">{{approval.preparedBy}}</div>
+            <div class="signature-line">Firma y fecha</div>
+          </div>
+          <div class="signature-box">
+            <div class="label">Aprobado por</div>
+            <div class="value" style="text-align:left">{{approval.approvedBy}}</div>
+            <div class="signature-line">Firma y fecha</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="footer">
+      <div>NUXELIT · Diseño, Tecnología y Estrategia en Interacción.</div>
+      <div>Generado el {{generatedAt}}</div>
+    </footer>
+  </main>
+</body>
+</html>

@@ -14,6 +14,7 @@ const chatbotRoutes = require('./chatbot/routes');
 const analyticsRoutes = require('./analytics/routes');
 const developerRoutes = require('./developer/routes');
 const projectRoutes = require('./project/routes');
+const estimationRoutes = require('./estimation/routes');
 
 router.use('/admin', adminRoutes);
 router.use('/site-config', siteConfigRoutes);
@@ -28,5 +29,7 @@ router.use('/chatbot', chatbotRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/developers', developerRoutes);
 router.use('/projects', projectRoutes);
+router.use('/estimations', estimationRoutes);
 
 module.exports = router;
+
