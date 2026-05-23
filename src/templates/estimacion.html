@@ -24,6 +24,7 @@
     }
     @page { size: A4; margin: 14mm 13mm 15mm 13mm; }
     .page, .page * { box-sizing: border-box !important; }
+    .page * { color: inherit; }
     .page { width: 100% !important; color: #1f2430 !important; background: #ffffff !important; font-family: "Satoshi", "Inter", "Segoe UI", Arial, sans-serif !important; font-size: 12px !important; line-height: 1.42 !important; margin: 0 !important; padding: 0 !important; }
     .page-break { page-break-before: always !important; break-before: page !important; }
     .avoid-break { page-break-inside: avoid !important; break-inside: avoid !important; }
@@ -48,7 +49,9 @@
     .status-aprobado { background: #ecfdf5 !important; color: #047857 !important; }
     .status-rechazado { background: #fef2f2 !important; color: #b91c1c !important; }
     .status-modificado { background: #eef0ff !important; color: #3a36e4 !important; }
-    .section { margin: 16px 0 0 !important; page-break-inside: avoid !important; }
+    .section { margin: 16px 0 0 !important; }
+    .page tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+    .page thead { display: table-header-group !important; }
     .section-header { display: flex !important; align-items: center !important; justify-content: space-between !important; background: linear-gradient(90deg, #3a36e4, #632de1) !important; color: #ffffff !important; padding: 9px 12px !important; border-radius: 10px 10px 0 0 !important; font-weight: 800 !important; letter-spacing: .2px !important; }
     .section-body { border: 1px solid #d9dce5 !important; border-top: 0 !important; border-radius: 0 0 10px 10px !important; padding: 12px !important; background: #ffffff !important; }
     .grid-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
