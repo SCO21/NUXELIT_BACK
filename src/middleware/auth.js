@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { errorResponse } = require('../utils/responseHelper');
-const Admin = require('../modules/admin/admin.model');
+const User = require('../modules/admin/user.model');
 
 const protect = async (req, res, next) => {
   let token;
 
+  // Extract Bearer token from authorization header
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   }
@@ -15,15 +16,21 @@ const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await Admin.findById(decoded.id).select('-password');
     
-    if (!req.user || !req.user.isActive) {
-      return errorResponse(res, 'Usuario no encontrado o inactivo', 401);
+    // Find user and select everything except passwordHash and twoFactorSecret
+    req.user = await User.findById(decoded.id);
+    
+    if (!req.user) {
+      return errorResponse(res, 'Usuario no encontrado', 401);
+    }
+
+    if (!req.user.isActive) {
+      return errorResponse(res, 'Esta cuenta ha sido desactivada', 401);
     }
     
     next();
   } catch (error) {
-    return errorResponse(res, 'No autorizado, token fallido', 401);
+    return errorResponse(res, 'No autorizado, token fallido o expirado', 401);
   }
 };
 

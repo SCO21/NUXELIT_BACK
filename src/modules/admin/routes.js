@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('./admin.controller');
-const { protect, authorize } = require('../../middleware/auth');
+const { protect } = require('../../middleware/auth');
 const validate = require('../../middleware/validate');
-const { loginSchema, registerSchema, refreshSchema, profileUpdateSchema } = require('./admin.joi');
+const { loginSchema } = require('./admin.joi');
 const { adminLogin } = require('../../middleware/rateLimiter');
-const { ROLES } = require('../../utils/constants');
 
+// Public routes (Authentication flow)
 router.post('/login', adminLogin, validate(loginSchema), adminController.login);
-router.post('/refresh', validate(refreshSchema), adminController.refresh);
+router.post('/verify-totp', adminController.verifyTOTP);
+router.post('/setup-totp', adminController.setupTOTP);
+router.post('/refresh', adminController.refresh);
+router.post('/logout', adminController.logout);
 
-// Protected routes
+// Protected routes (Requires valid Access Token)
 router.use(protect);
 
-router.post('/register', authorize(ROLES.SUPERADMIN), validate(registerSchema), adminController.register);
-router.route('/profile')
-  .get(adminController.getProfile)
-  .put(validate(profileUpdateSchema), adminController.updateProfile);
+router.post('/logout-global', adminController.logoutGlobal);
+router.get('/audit-logs', adminController.getAuditLogs);
 
 module.exports = router;

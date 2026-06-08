@@ -9,10 +9,29 @@ const routes = require('./modules/routes');
 const app = express();
 app.set('trust proxy', 1);
 
+const cookieParser = require('cookie-parser');
+const mongoSanitize = require('./middleware/mongoSanitize');
+
+// Cookie parsing Middleware
+app.use(cookieParser());
+
+// Sanitize data against NoSQL Injection
+app.use(mongoSanitize);
+
 // Security Middleware
 app.use(helmet());
+
+// Dynamic CORS configuration supporting cookie credentials
+const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:5173', 'http://localhost:5174'];
 app.use(cors({
-  origin: '*' // Allow all origins to avoid any Vercel domain issues
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(null, false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
 }));
 
 // Body parsing Middleware
