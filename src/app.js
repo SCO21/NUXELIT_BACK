@@ -22,15 +22,8 @@ app.use(mongoSanitize);
 app.use(helmet());
 
 // Dynamic CORS configuration supporting cookie credentials
-const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:5173', 'http://localhost:5174'];
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(null, false);
-    }
-    return callback(null, true);
-  },
+  origin: true,
   credentials: true
 }));
 
