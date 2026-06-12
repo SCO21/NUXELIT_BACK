@@ -12,7 +12,8 @@ app.set('trust proxy', 1);
 // Security Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*'
+  origin: true,
+  credentials: true
 }));
 
 // Body parsing Middleware
